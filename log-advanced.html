@@ -34,8 +34,8 @@ const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
 const fmt=n=>n[2]==='decimal'?(n[0]/n[1]).toString():n[1]===1?String(n[0]):n[0]+'/'+n[1];
 const ntex=n=>n[2]==='decimal'?fmt(n):n[1]===1?String(n[0]):'\\frac{'+n[0]+'}{'+n[1]+'}';
 const ntMath=n=>{if(n[2]==='decimal'||n[1]===1)return el('mn',fmt(n));const f=el('mfrac');f.append(el('mn',String(n[0])),el('mn',String(n[1])));return f};
-function tex(x){return '\\log_{'+ntex(x.b)+'}\\left('+ntex(x.a)+'\\right)'}
-function fallback(t,x){const m=el('math'),r=el('mrow'),l=el('msub');l.append(el('mi','log'),ntMath(x.b));r.append(l,el('mo','('),ntMath(x.a),el('mo',')'));m.append(r);t.replaceChildren(m)}
+function tex(x){return '\\log_{'+ntex(x.b)+'}'+(x.a[1]===1?ntex(x.a):'\\left('+ntex(x.a)+'\\right)')}
+function fallback(t,x){const m=el('math'),r=el('mrow'),l=el('msub');l.append(el('mi','log'),ntMath(x.b));r.append(l);if(x.a[1]!==1)r.append(el('mo','('));r.append(ntMath(x.a));if(x.a[1]!==1)r.append(el('mo',')'));m.append(r);t.replaceChildren(m)}
 function render(t,x){if(window.katex){try{window.katex.render(tex(x),t,{throwOnError:true,output:'htmlAndMathml'});return}catch(e){console.warn(e)}}fallback(t,x)}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function mathText(target,texValue,plain){if(window.katex){try{window.katex.render(texValue,target,{throwOnError:true,output:'htmlAndMathml'});return}catch(e){console.warn(e)}}target.textContent=plain}
