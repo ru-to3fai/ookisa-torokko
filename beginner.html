@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>大小くらべトロッコ</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+<style>
+:root{--navy:#101e32;--cream:#fff8e9;--gold:#f7bc4b;--mint:#a3e6d0;--coral:#ff937e}
+*{box-sizing:border-box}body{margin:0;background:#101e32;color:var(--cream);font-family:system-ui,"Noto Sans JP",sans-serif}.app-shell{min-height:100vh;background:radial-gradient(ellipse at 50% 4%,#294661,#101e32 65%)}.frame{width:min(100%,1000px);margin:auto;padding:28px 20px 42px}.topline,.status{display:flex;justify-content:space-between;align-items:center;gap:12px}.eyebrow{letter-spacing:.2em;color:var(--gold);font-size:12px;font-weight:800}.badge{border:1px solid #638098;border-radius:99px;padding:8px 14px;font-size:13px}.hero{text-align:center;margin:28px auto}.hero h1{font-size:clamp(26px,5vw,38px);margin:8px 0}.hero p{color:#bed0d2;line-height:1.7;margin:0}.game-panel{border:1px solid #6c8a96;border-radius:26px;padding:24px clamp(16px,4vw,40px) 30px;background:#1b3145;box-shadow:0 24px 70px #06121d90}.status-label{color:#bcd0d0;font-size:13px;font-weight:700}.status-number{font-size:23px;font-weight:800;color:var(--gold)}.progress{height:7px;border-radius:20px;background:#385365;margin:18px 0 24px;overflow:hidden}.progress-fill{height:100%;width:10%;background:var(--gold);transition:width .35s}.prompt{text-align:center;margin:0 0 20px;font-size:clamp(20px,4vw,26px)}.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.choice{border:2px solid #658492;background:#fef8e9;color:#142537;min-height:185px;border-radius:20px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:14px;cursor:pointer}.choice:not(:disabled):hover{border-color:var(--gold);transform:translateY(-3px)}.choice:disabled{cursor:default}.choice.correct{background:#c7f1da;border-color:#51bd83}.choice.incorrect{background:#ffe1d7;border-color:#ee826f}.lane{align-self:stretch;color:#5d7180;font-size:12px;font-weight:800;letter-spacing:.1em}.expression{display:flex;align-items:center;justify-content:center;width:100%;min-height:88px;font-size:clamp(30px,5vw,48px);font-weight:700;overflow-x:auto;overflow-y:hidden}.expression .katex{font-size:1em}.expression math{font-size:1em}.choice-hint{background:#e7e6d8;border-radius:99px;padding:5px 13px;font-size:12px;font-weight:700}.feedback{margin-top:20px;min-height:82px;border:1px solid #597989;border-radius:15px;padding:15px 18px;background:#13283a}.result-label{font-weight:900;color:var(--mint)}.result-label.wrong{color:#ffab98}.explanation{margin:6px 0 0;color:#c5d8d8;font-size:15px;line-height:1.7}.next-row{display:flex;justify-content:flex-end;margin-top:18px}.action{border:0;border-radius:12px;padding:13px 25px;background:var(--gold);color:#172333;font-size:16px;font-weight:800;cursor:pointer}.action:disabled{opacity:.45;cursor:not-allowed}button:focus-visible{outline:3px solid white;outline-offset:3px}.rail-art{height:78px;position:relative;margin:20px auto 0;max-width:620px}.rail-art::before{content:"";position:absolute;bottom:10px;left:0;right:0;height:22px;background:repeating-linear-gradient(90deg,transparent 0 21px,#9fadb0 21px 27px,transparent 27px 42px);border-top:4px solid #91a7a8;border-bottom:4px solid #91a7a8}.cart{position:absolute;left:0;bottom:25px;width:44px;height:33px;background:var(--gold);border:3px solid #172435;border-radius:5px 5px 10px 10px;transition:left .45s}.cart::before,.cart::after{content:"";position:absolute;bottom:-12px;width:10px;height:10px;background:#142131;border:2px solid #e5c077;border-radius:50%}.cart::before{left:4px}.cart::after{right:4px}.end-screen{text-align:center;padding:38px 12px}.end-score{color:var(--gold);font-size:clamp(55px,12vw,90px);font-weight:800}.end-screen p{color:#c4d8d5}.footer-note{text-align:center;color:#9bb5bc;font-size:12px;letter-spacing:.12em;margin-top:16px}[hidden]{display:none!important}@media(max-width:600px){.frame{padding:22px 14px 34px}.choice-grid{gap:9px}.choice{min-height:158px;padding:11px 5px}.lane,.choice-hint{font-size:10px}.expression{font-size:clamp(25px,8vw,38px)}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
+</style>
+</head><body><div class="app-shell"><div class="frame">
+<header><div class="topline"><div class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none">← レベル選択</a></div><span class="badge">全10問のチャレンジ</span></div><div class="hero"><h1>大小くらべトロッコ</h1><p>大きい数を選んで、トロッコをゴールまで進めよう！</p></div></header>
+<main><section class="game-panel" aria-label="比較ゲーム"><div id="play-view"><div class="status"><div><div class="status-label">QUESTION</div><div id="question-number" class="status-number" aria-live="polite"></div></div><div><div class="status-label">正解数</div><div id="score-number" class="status-number" aria-live="polite"></div></div></div><div class="progress" role="progressbar" aria-label="進行状況" aria-valuemin="0" aria-valuemax="10" id="progress-track"><div id="progress-fill" class="progress-fill"></div></div><h2 class="prompt">どちらの数が大きい？</h2><div class="choice-grid"><button id="choice-left" type="button" class="choice"><span class="lane">LEFT TRACK ↗</span><span id="left-expression" class="expression"></span><span class="choice-hint">こちらを選ぶ</span></button><button id="choice-right" type="button" class="choice"><span class="lane">RIGHT TRACK ↗</span><span id="right-expression" class="expression"></span><span class="choice-hint">こちらを選ぶ</span></button></div><div class="feedback" role="status" aria-live="polite"><div id="waiting-message">大きいと思う方のカードを押してね。</div><div id="answer-message" hidden><span id="correct-label" class="result-label" hidden>正解！ トロッコ前進！</span><span id="incorrect-label" class="result-label wrong" hidden>おしい！ 次で取り返そう！</span><p id="explanation" class="explanation"></p></div></div><div class="next-row"><button id="next-button" class="action" type="button" disabled>次の問題へ →</button></div></div><div id="end-view" class="end-screen" hidden><h2>ゴールに到着！</h2><div id="final-score" class="end-score" aria-live="polite"></div><p>チャレンジ完了！ もう一度挑戦してみよう。</p><button id="restart-button" class="action" type="button">もう一度遊ぶ ↻</button></div></section><div class="rail-art" aria-hidden="true"><div id="cart" class="cart"></div></div></main><footer><p class="footer-note">THINK FAST · CHOOSE BIG</p></footer>
+</div></div>
+<script>
+'use strict';
+// Each pair uses the same positive base. Values are exact fractions, not rounded decimals.
+// [category, numerator, denominator, display, left exponent numerator/denominator, right exponent numerator/denominator]
+const BANK=[
+ ['integer',2,1,'2',[-2,1],[-1,1]],['integer',2,1,'2',[-1,2],[0,1]],
+ ['integer',2,1,'2',[1,2],[1,1]],['integer',2,1,'2',[2,3],[1,1]],
+ ['integer',3,1,'3',[0,1],[-1,1]],['integer',3,1,'3',[1,2],[1,1]],
+ ['integer',3,1,'3',[-1,2],[-1,1]],['integer',4,1,'4',[1,2],[1,1]],
+ ['integer',4,1,'4',[-1,2],[0,1]],['integer',5,1,'5',[0,1],[1,2]],
+ ['integer',8,1,'8',[1,3],[1,2]],['integer',9,1,'9',[-1,2],[-1,1]],
+ ['integer',4,1,'4',[-2,1],[-1,2]],['integer',3,1,'3',[1,2],[3,2]],
+ ['decimal',1,2,'0.5',[-2,1],[-1,1]],['decimal',1,2,'0.5',[-1,1],[0,1]],
+ ['decimal',1,2,'0.5',[1,2],[1,1]],['decimal',1,5,'0.2',[-1,1],[0,1]],
+ ['decimal',1,5,'0.2',[1,1],[2,1]],['decimal',3,2,'1.5',[-1,1],[0,1]],
+ ['decimal',3,2,'1.5',[1,1],[2,1]],['decimal',1,4,'0.25',[-1,2],[0,1]],
+ ['decimal',1,4,'0.25',[1,2],[1,1]],['decimal',2,1,'2.0',[0,1],[1,1]],
+ ['decimal',1,2,'0.5',[-2,1],[-1,2]],['decimal',1,5,'0.2',[-2,1],[-1,2]],
+ ['decimal',3,2,'1.5',[1,2],[2,1]],['decimal',1,4,'0.25',[1,2],[2,1]],
+ ['fraction',1,2,null,[-1,1],[0,1]],['fraction',1,2,null,[1,2],[1,1]],
+ ['fraction',1,3,null,[-1,1],[-2,1]],['fraction',1,3,null,[0,1],[1,1]],
+ ['fraction',2,3,null,[-1,1],[0,1]],['fraction',2,3,null,[1,1],[2,1]],
+ ['fraction',3,2,null,[0,1],[1,1]],['fraction',3,2,null,[-1,1],[-2,1]],
+ ['fraction',3,4,null,[1,1],[2,1]],['fraction',4,3,null,[0,1],[-1,1]],
+ ['fraction',1,2,null,[-2,1],[-1,2]],['fraction',2,3,null,[-2,1],[-1,2]],
+ ['fraction',3,4,null,[-1,1],[-2,1]],['fraction',4,3,null,[1,2],[2,1]]
+];
+const $=id=>document.getElementById(id);
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function compareExact(q){
+ const [_,n,d,,a,b]=q;
+ const l=a[1]*b[1]/gcd(a[1],b[1]);
+ function power([p,k]){const e=BigInt(p*l/k);let x=BigInt(n),y=BigInt(d);if(e<0n)[x,y]=[y,x];const z=e<0n?-e:e;return [x**z,y**z]}
+ const [an,ad]=power(a),[bn,bd]=power(b);
+ const x=an*bd,y=bn*ad;return x>y?1:x<y?-1:0;
+}
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function sample(){
+ const quota={integer:4,decimal:3,fraction:3};
+ const easyTypes=new Set(shuffle(Object.keys(quota)).slice(0,2));
+ const q=Object.keys(quota).flatMap(type=>{
+   const pool=BANK.filter(x=>x[0]===type);
+   const easy=x=>[x[4],x[5]].some(e=>e[1]===1&&(e[0]===0||e[0]===1));
+   const selected=shuffle(pool.filter(x=>!easy(x))).slice(0,quota[type]-(easyTypes.has(type)?1:0));
+   if(easyTypes.has(type))selected.push(shuffle(pool.filter(easy))[0]);
+   return selected.map(x=>({data:x,flip:Math.random()<.5}));
+ });
+ return shuffle(q);
+}
+function expTex([n,d]){return d===1?String(n):(n<0?'-':'')+'\\frac{'+Math.abs(n)+'}{'+d+'}'}
+function baseTex(q){return q[0]==='fraction'?'\\left(\\frac{'+q[1]+'}{'+q[2]+'}\\right)':q[3]}
+function tex(q,e){
+ if(e[0]===0)return '1';
+ if(e[0]===1&&e[1]===1)return q[0]==='fraction'?'\\frac{'+q[1]+'}{'+q[2]+'}':q[3];
+ return baseTex(q)+'^{'+expTex(e)+'}';
+}
+function spoken(q,e){
+ if(e[0]===0)return '1';
+ const base=q[0]==='fraction'?q[1]+'/'+q[2]:q[3];
+ return e[0]===1&&e[1]===1?base:base+' の '+e[0]+'/'+e[1]+' 乗';
+}
+const M='http://www.w3.org/1998/Math/MathML';
+function el(tag,text){const node=document.createElementNS(M,tag);if(text!==undefined)node.textContent=text;return node}
+function fallbackMath(target,q,e){
+ const math=el('math');
+ if(e[0]===0){math.append(el('mn','1'));target.replaceChildren(math);return}
+ const base=q[0]==='fraction'?el('mrow'):el('mn',q[3]);
+ if(q[0]==='fraction'){
+   const f=el('mfrac');f.append(el('mn',String(q[1])),el('mn',String(q[2])));
+   if(e[0]===1&&e[1]===1)base.append(f);
+   else base.append(el('mo','('),f,el('mo',')'));
+ }
+ if(e[0]===1&&e[1]===1){math.append(base);target.replaceChildren(math);return}
+ const ex=el('mrow');
+ if(e[0]<0)ex.append(el('mo','−'));
+ if(e[1]===1)ex.append(el('mn',String(Math.abs(e[0]))));
+ else{const f=el('mfrac');f.append(el('mn',String(Math.abs(e[0]))),el('mn',String(e[1])));ex.append(f)}
+ const sup=el('msup');sup.append(base,ex);math.append(sup);target.replaceChildren(math);
+}
+function render(target,q,e){if(window.katex){try{window.katex.render(tex(q,e),target,{throwOnError:true,output:'htmlAndMathml'});return}catch(err){console.warn('Math render fallback',err)}}fallbackMath(target,q,e)}
+let order=[],index=0,score=0,answered=false;
+function showQuestion(){answered=false;const {data:q,flip}=order[index],left=flip?q[5]:q[4],right=flip?q[4]:q[5];$('question-number').textContent=String(index+1).padStart(2,'0')+' / 10';$('score-number').textContent=String(score);render($('left-expression'),q,left);render($('right-expression'),q,right);$('choice-left').setAttribute('aria-label','左の数 '+spoken(q,left)+' を選ぶ');$('choice-right').setAttribute('aria-label','右の数 '+spoken(q,right)+' を選ぶ');for(const id of ['choice-left','choice-right']){$(id).disabled=false;$(id).classList.remove('correct','incorrect')} $('waiting-message').hidden=false;$('answer-message').hidden=true;$('next-button').disabled=true;$('progress-fill').style.width=((index+1)*10)+'%';$('progress-track').setAttribute('aria-valuenow',String(index+1));$('cart').style.left='calc('+((index+1)*9)+'% - 22px)'}
+function choose(side){if(answered)return;answered=true;const {data:q,flip}=order[index],c=compareExact(q);if(c===0)throw Error('Equal pair in bank');const winner=(c>0)!==flip?'left':'right',correct=side===winner;if(correct)score++;$('score-number').textContent=String(score);$('choice-left').disabled=$('choice-right').disabled=true;$(winner==='left'?'choice-left':'choice-right').classList.add('correct');if(!correct)$(side==='left'?'choice-left':'choice-right').classList.add('incorrect');$('waiting-message').hidden=true;$('answer-message').hidden=false;$('correct-label').hidden=!correct;$('incorrect-label').hidden=correct;const base=q[0]==='fraction'?q[1]+'/'+q[2]:q[3];$('explanation').textContent=(q[1]>q[2]?base+' は 1 より大きいので、指数が大きい方が大きくなります。':base+' は 0 と 1 の間なので、指数が小さい方が大きくなります。')+(winner==='left'?'左':'右')+'が大きい。';$('next-button').disabled=false;$('next-button').focus()}
+function restart(){order=sample();index=0;score=0;$('play-view').hidden=false;$('end-view').hidden=true;showQuestion()}
+$('choice-left').addEventListener('click',()=>choose('left'));$('choice-right').addEventListener('click',()=>choose('right'));$('next-button').addEventListener('click',()=>{if(!answered)return;index++;if(index===order.length){$('play-view').hidden=true;$('end-view').hidden=false;$('final-score').textContent=score+' / 10';$('cart').style.left='calc(90% - 22px)';$('restart-button').focus()}else{showQuestion();$('choice-left').focus()}});$('restart-button').addEventListener('click',restart);restart();
+</script></body></html>
