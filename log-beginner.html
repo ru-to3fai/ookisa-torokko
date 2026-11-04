@@ -11,13 +11,13 @@ const pools=[
  {b:R(3),a:[R(1,3),R(1),R(2),R(3),R(4),R(5),R(6),R(9),R(27)]},
  {b:R(5),a:[R(1,5),R(1),R(2),R(3),R(4),R(5),R(6),R(25)]},
  {b:R(10),a:[R(1,10,'decimal'),R(1),R(2),R(3),R(5),R(10),R(20),R(100)]},
- {b:R(1,2),a:[R(1,8),R(1,4),R(1,2),R(1),R(2),R(3),R(4),R(5),R(6),R(8)]},
+ {b:R(1,2),a:[R(1,8),R(1,4),R(1,2),R(1),R(2),R(3),R(4),R(5),R(6),R(7),R(8)]},
  {b:R(1,3),a:[R(1,27),R(1,9),R(1,3),R(1),R(2),R(3),R(4),R(5),R(6),R(9)]},
- {b:R(5,10,'decimal'),a:[R(1,8),R(1,4),R(1,2),R(1),R(2),R(3),R(4),R(5),R(6)]}
+ {b:R(5,10,'decimal'),a:[R(1,8),R(1,4),R(1,2),R(1),R(2),R(3),R(4),R(5),R(6),R(7)]}
 ];
 function fractionCompare(a,b){let x=BigInt(a[0])*BigInt(b[1]),y=BigInt(b[0])*BigInt(a[1]);return x>y?1:x<y?-1:0}
 function compare(a,b){let c=fractionCompare(a.a,b.a);return fractionCompare(a.b,[1,1])>0?c:-c}
-function sample(){let deck=[];for(const pool of pools){let order=shuffle([...pool.a]);for(let i=0;i<2;i++){let a=order[i*2],b=order[i*2+1];deck.push({left:L(pool.b,a),right:L(pool.b,b),flip:Math.random()<.5,showIntegerLeft:null})}}deck=shuffle(deck).slice(0,10);for(const i of shuffle(deck.map((_,i)=>i).filter(i=>exactValue(deck[i].left)!==null||exactValue(deck[i].right)!==null)).slice(0,2)){const q=deck[i],a=exactValue(q.left)!==null,b=exactValue(q.right)!==null;q.showIntegerLeft=a&&b?Math.random()<.5:a}return deck}
+function sample(){const logPairs=[],integerPairs=[];for(const pool of pools){const non=shuffle(pool.a.filter(a=>exactValue(L(pool.b,a))===null)),whole=shuffle(pool.a.filter(a=>exactValue(L(pool.b,a))!==null));for(let i=0;i<2;i++)logPairs.push({left:L(pool.b,non[2*i]),right:L(pool.b,non[2*i+1]),flip:Math.random()<.5,showIntegerLeft:null});const integerFirst=Math.random()<.5;integerPairs.push({left:L(pool.b,integerFirst?whole[0]:non[0]),right:L(pool.b,integerFirst?non[0]:whole[0]),flip:Math.random()<.5,showIntegerLeft:integerFirst})}return shuffle([...shuffle(logPairs).slice(0,8),...shuffle(integerPairs).slice(0,2)])}
 function exactValue(x){for(let k=-6;k<=6;k++){let n=BigInt(x.b[0]),d=BigInt(x.b[1]),p=BigInt(Math.abs(k));let a=k<0?d**p:n**p,b=k<0?n**p:d**p;if(a*BigInt(x.a[1])===b*BigInt(x.a[0]))return k}return null}
 function hint(q){let a=q.left.a,b=q.right.a,sign=fractionCompare(a,b)>0?'>':'<',relation=compare(q.left,q.right)>0?'>':'<',baseSign=fractionCompare(q.left.b,[1,1])>0?'>':'<',integer=q.showIntegerLeft===null?'':(()=>{const x=q.showIntegerLeft?q.left:q.right;return exactValue(x)+'='+tex(x)+'\\quad'})();return integer+ntex(a)+sign+ntex(b)+'\\quad (\\text{底 }'+ntex(q.left.b)+baseSign+'1\\;\\Longrightarrow\\;'+tex(q.left)+relation+tex(q.right)+')'}
 function plainHint(q){return '底 '+fmt(q.left.b)+' は1'+(fractionCompare(q.left.b,[1,1])>0?'より大きい':'より小さい')+'。真数は '+fmt(q.left.a)+(fractionCompare(q.left.a,q.right.a)>0?'>':'<')+fmt(q.right.a)+'。'}
